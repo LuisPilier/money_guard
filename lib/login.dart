@@ -14,10 +14,12 @@ class _LoginState extends State<Login> {
   final TextEditingController _contrasenaController = TextEditingController();
   final SupabaseClient supabaseClient = Supabase.instance.client;
 
+  /// Inicia sesión con el usuario y contraseña proporcionados.
   Future<void> _iniciarSesion() async {
     final String usuario = _usuarioController.text;
     final String contrasena = _contrasenaController.text;
 
+    // Realiza la consulta a la base de datos para obtener el usuario.
     final response = await supabaseClient
         .from('usuarios')
         .select()
@@ -40,11 +42,13 @@ class _LoginState extends State<Login> {
 
     final String claveHash = data['clave_hash'];
 
+    // Verifica la contraseña
     if (contrasena == claveHash) {
       var box = Hive.box('userBox');
       box.put('nombre_usuario', data['nombre_usuario']);
       box.put('correo', data['correo']);
 
+      // Navega a la pantalla Home
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Home()),
@@ -54,6 +58,7 @@ class _LoginState extends State<Login> {
     }
   }
 
+  /// Muestra un diálogo con un mensaje.
   void _mostrarDialogo(String titulo, String contenido) {
     showDialog(
       context: context,
@@ -89,21 +94,19 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// Construye el contenido de la pantalla de inicio de sesión.
   Widget _buildContent(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(height: 40),
-        Container(
-          padding: EdgeInsets.only(top: 10),
-          child: Text(
-            'Iniciar Sesión',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w700,
-              fontSize: 18,
-              color: Colors.white,
-            ),
+        Text(
+          'Iniciar Sesión',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+            color: Colors.white,
           ),
         ),
         SizedBox(height: 10),
@@ -176,6 +179,7 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// Construye un campo de texto personalizado.
   Widget _buildTextField(String label, String hint, TextEditingController controller, BuildContext context, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
