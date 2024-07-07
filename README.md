@@ -1,7 +1,5 @@
 # MoneyGuard
 
-![MoneyGuard](https://example.com/screenshot.png)
-
 ## Descripción
 
 MoneyGuard es una aplicación móvil desarrollada en Flutter que permite a los usuarios rastrear sus ingresos y gastos diarios, categorizarlos y analizar sus hábitos de gasto. La aplicación ofrece una interfaz intuitiva y fácil de usar, gráficos interactivos y la capacidad de exportar datos.
@@ -22,4 +20,11 @@ MoneyGuard es una aplicación móvil desarrollada en Flutter que permite a los u
 - Provider (para gestión del estado)
 - Charts_flutter (para gráficos)
 - Flutter_localizations (para soporte multilenguaje)
+<div align="center">
+  <h2>Imágenes de la Aplicación</h2>
+</div>
 
+<div align="center">
+    <img src="media/Home.png" alt="MoneyGuard Home" style="width:45%;"/>
+    <img src="media/Report.png" alt="MoneyGuard Report" style="width:45%;"/>
+</div>
