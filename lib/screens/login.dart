@@ -13,19 +13,52 @@ class _LoginState extends State<Login> {
   final TextEditingController _usuarioController = TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
   final SupabaseClient supabaseClient = Supabase.instance.client;
+  bool _isLoading = false;
+  bool _isUserLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarDatosDesdeHive();
+  }
+
+  /// Carga los datos desde Hive y los pone en los campos correspondientes.
+  void _cargarDatosDesdeHive() {
+    final box = Hive.box('userBox');
+    final nombreUsuario = box.get('nombre_usuario', defaultValue: '');
+    _usuarioController.text = nombreUsuario;
+
+    // Verifica si existe un usuario en la base de datos de Hive
+    setState(() {
+      _isUserLoggedIn = nombreUsuario.isNotEmpty;
+    });
+  }
 
   /// Inicia sesión con el usuario y contraseña proporcionados.
   Future<void> _iniciarSesion() async {
-    final String usuario = _usuarioController.text;
-    final String contrasena = _contrasenaController.text;
+    final String usuario = _usuarioController.text.trim();
+    final String contrasena = _contrasenaController.text.trim();
 
-    // Realiza la consulta a la base de datos para obtener el usuario.
+    if (usuario.isEmpty || contrasena.isEmpty) {
+      _mostrarDialogo('Error', 'Por favor, ingresa todos los campos.');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Realiza la consulta a la base de datos para obtener el usuario y su ID.
     final response = await supabaseClient
         .from('usuarios')
-        .select()
+        .select('id, nombre_usuario, correo, clave_hash')
         .eq('nombre_usuario', usuario)
         .single()
         .execute();
+
+    setState(() {
+      _isLoading = false;
+    });
 
     final data = response.data;
     final error = response.error;
@@ -47,8 +80,8 @@ class _LoginState extends State<Login> {
       var box = Hive.box('userBox');
       box.put('nombre_usuario', data['nombre_usuario']);
       box.put('correo', data['correo']);
+      box.put('id_usuario', data['id']);
 
-      // Navega a la pantalla Home
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => Home()),
@@ -79,6 +112,41 @@ class _LoginState extends State<Login> {
     );
   }
 
+  /// Muestra un diálogo con un mensaje de éxito al desvincular la cuenta.
+  void _mostrarDialogoDesvinculacion() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Éxito'),
+          content: Text('Usuario desvinculado exitosamente.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Limpia todos los datos almacenados en Hive.
+  void _desvincularCuenta() {
+    var box = Hive.box('userBox');
+    box.clear(); // Limpia todos los datos almacenados en Hive
+    _usuarioController.clear();
+    _contrasenaController.clear();
+
+    setState(() {
+      _isUserLoggedIn = false; // Actualiza el estado para ocultar el botón 'Desvincular'
+    });
+
+    _mostrarDialogoDesvinculacion();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,11 +173,11 @@ class _LoginState extends State<Login> {
           'Iniciar Sesión',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontSize: 24,
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.6,
           height: MediaQuery.of(context).size.width * 0.6,
@@ -118,35 +186,37 @@ class _LoginState extends State<Login> {
             fit: BoxFit.contain,
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         _buildTextField('Usuario', 'Ingresa tu usuario', _usuarioController, context),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         _buildTextField('Contraseña', 'Ingresa tu contraseña', _contrasenaController, context, obscureText: true),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         Container(
-          width: MediaQuery.of(context).size.width * 0.4,
-          height: 36,
+          width: MediaQuery.of(context).size.width * 0.5,
+          height: 45,
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(22.5),
           ),
           child: TextButton(
-            onPressed: _iniciarSesion,
+            onPressed: _isLoading ? null : _iniciarSesion,
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
             ),
-            child: Text(
-              'Acceder',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-                color: Colors.black,
-              ),
-            ),
+            child: _isLoading
+                ? CircularProgressIndicator(color: Colors.black)
+                : Text(
+                    'Acceder',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
           ),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: 20),
         TextButton(
           onPressed: () {
             // Acción al presionar el botón de ¿Todavía no tienes cuenta?
@@ -155,12 +225,11 @@ class _LoginState extends State<Login> {
             '¿Todavía no tienes cuenta?',
             style: GoogleFonts.poppins(
               fontWeight: FontWeight.w500,
-              fontSize: 12,
+              fontSize: 14,
               color: Colors.white,
             ),
           ),
         ),
-        SizedBox(height: 2),
         TextButton(
           onPressed: () {
             // Acción al presionar el botón de Regístrate
@@ -175,6 +244,25 @@ class _LoginState extends State<Login> {
             ),
           ),
         ),
+        SizedBox(height: 20),
+        if (_isUserLoggedIn) // Muestra el botón solo si hay un usuario registrado
+          ElevatedButton(
+            onPressed: _desvincularCuenta,
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red, // Color rojo para el botón
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Desvincular',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -188,14 +276,14 @@ class _LoginState extends State<Login> {
           label,
           style: GoogleFonts.inter(
             fontWeight: FontWeight.w400,
-            fontSize: 12,
+            fontSize: 14,
             color: Colors.white,
           ),
         ),
-        SizedBox(height: 4),
+        SizedBox(height: 8),
         Container(
-          width: MediaQuery.of(context).size.width * 0.7,
-          height: 32,
+          width: MediaQuery.of(context).size.width * 0.8,
+          height: 45,
           decoration: BoxDecoration(
             border: Border.all(color: Color(0xFFD9D9D9)),
             borderRadius: BorderRadius.circular(8),
@@ -206,16 +294,16 @@ class _LoginState extends State<Login> {
             obscureText: obscureText,
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w400,
-              fontSize: 12,
-              color: Color(0xFFB3B3B3),
+              fontSize: 14,
+              color: Color(0xFF333333),
             ),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               border: InputBorder.none,
               hintText: hint,
               hintStyle: GoogleFonts.inter(
                 fontWeight: FontWeight.w400,
-                fontSize: 12,
+                fontSize: 14,
                 color: Color(0xFFB3B3B3),
               ),
             ),

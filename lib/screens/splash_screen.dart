@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import './login.dart';
+import './login.dart'; // Asegúrate de importar tu pantalla de login
 import 'onboarding_one.dart'; // Importa tu pantalla de onboarding
 
 class SplashScreen extends StatefulWidget {
@@ -12,14 +15,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Delay for 2 seconds before navigating to OnboardingOne
-    Timer(
-      Duration(seconds: 2),
-      () => Navigator.pushReplacement(
+    _checkUserAndNavigate();
+  }
+
+  Future<void> _checkUserAndNavigate() async {
+    // Espera un tiempo antes de navegar
+    await Future.delayed(Duration(seconds: 2));
+
+    var box = Hive.box('userBox');
+    final int? userId = box.get('id_usuario') as int?;
+
+    if (userId != null) {
+      // Si existe un usuario, navega a la pantalla de login
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Login()),
+      );
+    } else {
+      // Si no existe usuario, navega a la pantalla de onboarding
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => OnboardingOne()),
-      ),
-    );
+      );
+    }
   }
 
   @override

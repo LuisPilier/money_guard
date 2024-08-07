@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'splash_screen.dart'; // Importa tu pantalla Login aquí
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'screens/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load the .env file
+  await dotenv.load(fileName: ".env");
 
   await Supabase.initialize(
-    url: '',
-    anonKey: '',
+    url: dotenv.get('SUPABASE_URL'),
+    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
   );
 
   await Hive.initFlutter();

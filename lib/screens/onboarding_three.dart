@@ -2,10 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'onboarding_two.dart'; // Importamos el archivo de OnboardingTwo
+import 'package:money_guard/screens/login.dart';
+import 'package:money_guard/screens/onboarding_three.dart';
+import 'onboarding_Three.dart'; // Importamos el archivo de OnboardingThree
 
 // ignore: use_key_in_widget_constructors
-class OnboardingOne extends StatelessWidget {
+class OnboardingThree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +21,7 @@ class OnboardingOne extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                '¡Bienvenido a MoneyGuard!',
+                'Ahorra y alcanza tus metas',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w700,
@@ -34,7 +36,7 @@ class OnboardingOne extends StatelessWidget {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/images/ewallet_amico_1.png'),
+                    image: AssetImage('assets/images/finance_app_amico_1.png'),
                   ),
                 ),
               ),
@@ -42,7 +44,7 @@ class OnboardingOne extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  'Toma el control de tus finanzas personales con MoneyGuard. Nuestra aplicación te ayudará a gestionar tu dinero de manera efectiva.',
+                  'Establece objetivos de ahorro y sigue tu progreso. MoneyGuard te ayuda a mantenerte enfocado y motivado para que puedas cumplir tus sueños financieros.',
                   textAlign: TextAlign.justify,
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w500,
@@ -64,7 +66,7 @@ class OnboardingOne extends StatelessWidget {
                       context,
                       PageRouteBuilder(
                         transitionDuration: Duration(milliseconds: 500),
-                        pageBuilder: (_, __, ___) => OnboardingTwo(),
+                        pageBuilder: (_, __, ___) => Login(),
                         transitionsBuilder: (_, animation, __, child) {
                           return FadeTransition(
                             opacity: animation,
@@ -95,7 +97,7 @@ class OnboardingOne extends StatelessWidget {
 void main() {
   runApp(
     MaterialApp(
-      home: OnboardingOne(),
+      home: OnboardingThree(),
     ),
   );
 }

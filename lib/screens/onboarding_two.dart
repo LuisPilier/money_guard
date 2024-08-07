@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:money_guard/onboarding_three.dart';
+import 'package:money_guard/screens/onboarding_three.dart';
 import 'onboarding_two.dart'; // Importamos el archivo de OnboardingTwo
 
 // ignore: use_key_in_widget_constructors
