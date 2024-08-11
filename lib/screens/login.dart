@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:money_guard/screens/register.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:hive/hive.dart';
 import 'home.dart'; // Importa tu pantalla Home aquí
@@ -141,7 +142,8 @@ class _LoginState extends State<Login> {
     _contrasenaController.clear();
 
     setState(() {
-      _isUserLoggedIn = false; // Actualiza el estado para ocultar el botón 'Desvincular'
+      _isUserLoggedIn =
+          false; // Actualiza el estado para ocultar el botón 'Desvincular'
     });
 
     _mostrarDialogoDesvinculacion();
@@ -187,9 +189,12 @@ class _LoginState extends State<Login> {
           ),
         ),
         SizedBox(height: 20),
-        _buildTextField('Usuario', 'Ingresa tu usuario', _usuarioController, context),
+        _buildTextField(
+            'Usuario', 'Ingresa tu usuario', _usuarioController, context),
         SizedBox(height: 20),
-        _buildTextField('Contraseña', 'Ingresa tu contraseña', _contrasenaController, context, obscureText: true),
+        _buildTextField('Contraseña', 'Ingresa tu contraseña',
+            _contrasenaController, context,
+            obscureText: true),
         SizedBox(height: 20),
         Container(
           width: MediaQuery.of(context).size.width * 0.5,
@@ -217,33 +222,24 @@ class _LoginState extends State<Login> {
           ),
         ),
         SizedBox(height: 20),
-        TextButton(
-          onPressed: () {
-            // Acción al presionar el botón de ¿Todavía no tienes cuenta?
-          },
-          child: Text(
-            '¿Todavía no tienes cuenta?',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-              color: Colors.white,
+        if (!_isUserLoggedIn) // Deshabilita el botón si ya hay un usuario
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Register()),
+              );
+            },
+            child: Text(
+              'Regístrate',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                decoration: TextDecoration.underline,
+                color: Colors.white,
+              ),
             ),
           ),
-        ),
-        TextButton(
-          onPressed: () {
-            // Acción al presionar el botón de Regístrate
-          },
-          child: Text(
-            'Regístrate',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              decoration: TextDecoration.underline,
-              color: Colors.white,
-            ),
-          ),
-        ),
         SizedBox(height: 20),
         if (_isUserLoggedIn) // Muestra el botón solo si hay un usuario registrado
           ElevatedButton(
@@ -268,7 +264,9 @@ class _LoginState extends State<Login> {
   }
 
   /// Construye un campo de texto personalizado.
-  Widget _buildTextField(String label, String hint, TextEditingController controller, BuildContext context, {bool obscureText = false}) {
+  Widget _buildTextField(String label, String hint,
+      TextEditingController controller, BuildContext context,
+      {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -298,14 +296,15 @@ class _LoginState extends State<Login> {
               color: Color(0xFF333333),
             ),
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              border: InputBorder.none,
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               hintText: hint,
               hintStyle: GoogleFonts.inter(
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
-                color: Color(0xFFB3B3B3),
+                color: Color(0xFF999999),
               ),
+              border: InputBorder.none,
             ),
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/home.dart';
 import '../screens/add_movements.dart';
+import '../screens/statistics.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
@@ -21,8 +22,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
           MaterialPageRoute(builder: (context) => AdMovements()),
         );
         break;
-      // case 2:
-      // Add navigation to Estadísticas screen here
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Statistics()),
+        );
     }
   }
 
