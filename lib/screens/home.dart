@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../components/bottom_navigation_bar.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -50,7 +51,7 @@ class _HomeState extends State<Home> {
           'monto': item['monto'].toString(),
           'tipo_movimiento_nombre': item['tipo_movimiento_nombre'],
           'tipo_gasto_nombre': item['tipo_gasto_nombre'],
-          'descripcion' : item['descripcion']
+          'descripcion': item['descripcion']
         };
       }).toList();
       _isLoading = false;
@@ -179,53 +180,54 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildBalanceCard() {
-    return Container(
-      margin: EdgeInsets.only(bottom: 16),
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: Offset(0, 5))
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Balance Promedio',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w700,
-              fontSize: 22,
-              color: Color(0xFF000000),
-            ),
+  return Container(
+    margin: EdgeInsets.only(bottom: 16),
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 5))
+      ],
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Balance Promedio',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w700,
+            fontSize: 22,
+            color: Color(0xFF000000),
           ),
-          SizedBox(height: 8),
-          Text(
-            '\$ ${_balancePromedio.toStringAsFixed(2)}',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.w600,
-              fontSize: 28,
-              color: Color(0xFF319F28),
-            ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          '\$ ${_formatAmount(_balancePromedio)}',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
+            fontSize: 28,
+            color: Color(0xFF319F28),
           ),
-          SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildBalanceDetail('Ingresos',
-                  '\$ ${_totalCreditos.toStringAsFixed(2)}', Color(0xFF319F28)),
-              _buildBalanceDetail('Gastos',
-                  '\$ ${_totalDebitos.toStringAsFixed(2)}', Color(0xFFF23838)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildBalanceDetail(
+                'Ingresos', '\$ ${_formatAmount(_totalCreditos)}', Color(0xFF319F28)),
+            _buildBalanceDetail(
+                'Gastos', '\$ ${_formatAmount(_totalDebitos)}', Color(0xFFF23838)),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget _buildBalanceDetail(String title, String amount, Color color) {
     return Column(
@@ -268,13 +270,12 @@ class _HomeState extends State<Home> {
                 itemBuilder: (context, index) {
                   final item = _movimientosData[index];
                   return _buildMovementItem(
-                    item['monto'],
-                    _formatDate(item['fecha']),
-                    item['tipo_movimiento_nombre'],
-                    item['tipo_gasto_nombre'],
-                    _getIconPath(item['tipo_movimiento_nombre']),
-                    item['descripcion']
-                  );
+                      item['monto'],
+                      _formatDate(item['fecha']),
+                      item['tipo_movimiento_nombre'],
+                      item['tipo_gasto_nombre'],
+                      _getIconPath(item['tipo_movimiento_nombre']),
+                      item['descripcion']);
                 },
               ),
       ),
@@ -317,7 +318,8 @@ class _HomeState extends State<Home> {
                 color: Color(0xFF000000),
               ),
             ),
-            SizedBox(height: 4), // Adds spacing between the title and the subtitle
+            SizedBox(
+                height: 4), // Adds spacing between the title and the subtitle
             Text(
               descripcion,
               style: GoogleFonts.poppins(
@@ -337,7 +339,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         trailing: Text(
-          '$amountPrefix$amount',
+          '$amountPrefix${_formatAmount(double.parse(amount))}',
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.w600,
             fontSize: 16,
@@ -351,6 +353,11 @@ class _HomeState extends State<Home> {
   String _formatDate(String dateTimeString) {
     DateTime dateTime = DateTime.parse(dateTimeString);
     return '${dateTime.day.toString().padLeft(2, '0')}/${dateTime.month.toString().padLeft(2, '0')}/${dateTime.year}';
+  }
+
+  String _formatAmount(double amount) {
+    final formatter = NumberFormat('#,##0.00', 'en_US');
+    return formatter.format(amount);
   }
 
   String _getIconPath(String tipoMovimientoNombre) {
