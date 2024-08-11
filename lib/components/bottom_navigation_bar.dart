@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/home.dart';
 import '../screens/add_movements.dart';
 import '../screens/maintenance.dart';
+import '../screens/login.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
@@ -26,6 +27,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Maintenance()),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
         );
     }
   }
@@ -79,6 +86,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
               height: 24,
             ),
             label: 'Mantenimiento',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset(
+              'assets/images/log-out-03-svgrepo-com.svg', // Ruta del ícono de Estadísticas
+              color: Colors.blue,
+              width: 24,
+              height: 24,
+            ),
+            label: 'Salir',
           ),
         ],
       ),
