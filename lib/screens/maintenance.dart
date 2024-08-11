@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../components/bottom_navigation_bar.dart'; // Asegúrate de importar el archivo correcto
-
+import '../../components/bottom_navigation_bar.dart'; 
+import 'package:hive/hive.dart';
 class Maintenance extends StatefulWidget {
   @override
   _MaintenanceState createState() => _MaintenanceState();
@@ -26,26 +26,33 @@ class _MaintenanceState extends State<Maintenance> {
     _fetchTipoMovimiento();
   }
 
-  Future<void> _fetchMovimientos() async {
-    try {
-      final response = await supabase.from('movimientos').select().execute();
+Future<void> _fetchMovimientos() async {
+  try {
+    final int? userId = Hive.box('userBox').get('id_usuario') as int?;
 
-      if (response.error != null) {
-        setState(() {
-          _errorMessage = response.error!.message;
-        });
-        return;
-      }
+    final response = await supabase
+        .from('movimientos')
+        .select()
+        .eq('usuario_id', userId) // Asegúrate de que el nombre del campo sea 'user_id'
+        .execute();
 
+    if (response.error != null) {
       setState(() {
-        _movimientos = response.data as List<dynamic>;
+        _errorMessage = response.error!.message;
       });
-    } catch (error) {
-      setState(() {
-        _errorMessage = 'Error al leer movimientos: $error';
-      });
+      return;
     }
+
+    setState(() {
+      _movimientos = response.data as List<dynamic>;
+    });
+  } catch (error) {
+    setState(() {
+      _errorMessage = 'Error al leer movimientos: $error';
+    });
   }
+}
+
 
   Future<void> _fetchTipoGasto() async {
     try {
