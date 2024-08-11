@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/home.dart';
 import '../screens/add_movements.dart';
-import '../screens/statistics.dart';
+import '../screens/maintenance.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   const CustomBottomNavigationBar({Key? key}) : super(key: key);
@@ -25,7 +25,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Statistics()),
+          MaterialPageRoute(builder: (context) => Maintenance()),
         );
     }
   }
@@ -73,12 +73,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/images/icon_9_x2.svg', // Ruta del ícono de Estadísticas
+              'assets/images/maintenance-svgrepo-com.svg', // Ruta del ícono de Estadísticas
               color: Colors.blue,
               width: 24,
               height: 24,
             ),
-            label: 'Estadísticas',
+            label: 'Mantenimiento',
           ),
         ],
       ),

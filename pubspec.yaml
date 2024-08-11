@@ -78,6 +78,7 @@ flutter:
     - assets/images/icon_1_x2.svg
     - assets/images/avatars_3_davatar_21.png
     - assets/images/plain_credit_card_amico_1.png
+    - assets/images/maintenance-svgrepo-com.svg
 
 
   # The following line ensures that the Material Icons font is
