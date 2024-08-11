@@ -50,6 +50,7 @@ class _HomeState extends State<Home> {
           'monto': item['monto'].toString(),
           'tipo_movimiento_nombre': item['tipo_movimiento_nombre'],
           'tipo_gasto_nombre': item['tipo_gasto_nombre'],
+          'descripcion' : item['descripcion']
         };
       }).toList();
       _isLoading = false;
@@ -272,6 +273,7 @@ class _HomeState extends State<Home> {
                     item['tipo_movimiento_nombre'],
                     item['tipo_gasto_nombre'],
                     _getIconPath(item['tipo_movimiento_nombre']),
+                    item['descripcion']
                   );
                 },
               ),
@@ -280,7 +282,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildMovementItem(String amount, String date, String title,
-      String tipoGastoNombre, String iconPath) {
+      String tipoGastoNombre, String iconPath, String descripcion) {
     final isDebit = tipoGastoNombre == 'Débito';
     final amountColor = isDebit ? Color(0xFFF23838) : Color(0xFF319F28);
     final amountPrefix = isDebit ? '- ' : '+ ';
@@ -304,13 +306,27 @@ class _HomeState extends State<Home> {
           height: 40,
           fit: BoxFit.cover,
         ),
-        title: Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-            color: Color(0xFF000000),
-          ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                color: Color(0xFF000000),
+              ),
+            ),
+            SizedBox(height: 4), // Adds spacing between the title and the subtitle
+            Text(
+              descripcion,
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.w400,
+                fontSize: 14,
+                color: Color(0xFF8F8F8F),
+              ),
+            ),
+          ],
         ),
         subtitle: Text(
           date,
