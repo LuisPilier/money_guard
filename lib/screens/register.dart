@@ -70,12 +70,11 @@ class _RegisterState extends State<Register> {
       return;
     }
 
-    _mostrarDialogo('Éxito', 'Usuario registrado exitosamente.', Icons.check_circle);
-    Navigator.pop(context); // Regresa a la pantalla de inicio de sesión después de registrarse
+    _mostrarDialogo('Éxito', 'Usuario registrado exitosamente.', Icons.check_circle, isSuccess: true);
   }
 
   /// Muestra un diálogo con un mensaje e ícono.
-  void _mostrarDialogo(String titulo, String contenido, IconData icono) {
+  void _mostrarDialogo(String titulo, String contenido, IconData icono, {bool isSuccess = false}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -93,6 +92,9 @@ class _RegisterState extends State<Register> {
               child: Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
+                if (isSuccess) {
+                  Navigator.pop(context); // Regresa a la pantalla de inicio de sesión después de registrarse
+                }
               },
             ),
           ],
